@@ -2,22 +2,38 @@ import LitJsSdk from '@lit-protocol/sdk-browser'
 
 const client = new LitJsSdk.LitNodeClient()
 // For all EVM compatible chain
-const chain = 'ethereum'
-const accessControlConditionsNFT = {
-	// LensHub Proxy (contract where NFTs are stored?)
-	// Or we could simply check if the author of the post is in possession
-	// of a specific wallet address ->
-	// see https://developer.litprotocol.com/AccessControlConditions/EVM/basicExamples
-	contractAddress: '0x60ae865ee4c725cd04353b5aab364553f56cef82',
-	standardContractType: 'ERC721',
-	chain,
-	method: 'balanceOf',
-	parameters: [':userAddress'],
-	returnValueTest: {
-		comparator: '>',
-		value: '0',
+const chain = 'mumbai'
+
+const accessControlConditions = [
+	{
+		// check if the author of the post is in possession
+		// of a specific wallet address
+		// https://developer.litprotocol.com/AccessControlConditions/EVM/basicExamples
+		contractAddress: '',
+		standardContractType: '',
+		chain,
+		method: '',
+		parameters: [':userAddress'],
+		returnValueTest: {
+			comparator: '=',
+			// post author address
+			value: process.env.NEXT_PUBLIC_ADDR_1,
+		},
 	},
-}
+	{ operator: 'or' },
+	{
+		contractAddress: '',
+		standardContractType: '',
+		chain: 'mumbai',
+		method: '',
+		parameters: [':userAddress'],
+		returnValueTest: {
+			comparator: '=',
+			// comment author address
+			value: process.env.NEXT_PUBLIC_ADDR_2,
+		},
+	},
+]
 
 class Lit {
 	litNodeClient
@@ -31,18 +47,43 @@ class Lit {
 		}
 	}
 
-	async encryptString(str) {
+	async encryptString() {
 		if (!this.litNodeClient) {
 			await this.connect()
 		}
 		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
-		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(str)
+		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString('BOBOBOBO')
+		console.log('encrypted string:', encryptedString)
 		const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-			accessControlConditions: accessControlConditionsNFT,
+			accessControlConditions: accessControlConditions,
 			symmetricKey,
 			authSig,
 			chain,
 		})
+
+		return {
+			encryptedFile: encryptedString,
+			encryptedSymmetricKey: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, 'base16'),
+		}
+	}
+
+	async decryptString(encryptedStr, encryptedSymmetricKey) {
+		if (!this.litNodeClient) {
+			await this.connect()
+		}
+		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
+		const symmetricKey = await this.litNodeClient.getEncryptionKey({
+			accessControlConditions: accessControlConditions,
+			toDecrypt: encryptedSymmetricKey,
+			chain,
+			authSig,
+		})
+		const decryptedFile = await LitJsSdk.decryptString(encryptedStr, symmetricKey)
+		// eslint-disable-next-line no-console
+		console.log({
+			decryptedFile,
+		})
+		return { decryptedFile }
 	}
 }
 
