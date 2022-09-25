@@ -9,6 +9,7 @@ import ThemeSwitcher from '@/components/ThemeSwitcher'
 import Spinner from './Spinner'
 import lit from '../lib/lit'
 import LitJsSdk from '@lit-protocol/sdk-browser'
+import prisma from '../lib/prisma'
 
 import omitDeep from 'omit-deep'
 import { isBooleanObject } from 'util/types'
@@ -47,6 +48,9 @@ const PublishComment: FC<ICommentProps> = (profile, publicationId: ICommentProps
 		setSubmitting(true)
 		console.log('Comment', comment)
 
+		let pinataUri
+		let contentUri
+
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const contract = new ethers.Contract(LENS_HUB_CONTRACT_ADDRESS, LENSHUB, signer)
@@ -66,6 +70,7 @@ const PublishComment: FC<ICommentProps> = (profile, publicationId: ICommentProps
 		setEncryptedComment(encryptedComment)
 
 		// 2. Store encryptedFile and Key on Pinata and retrieve encryptionURI
+
 		const body = {
 			litComment: encryptedComment,
 			litKkey: encryptedKey,
@@ -81,22 +86,45 @@ const PublishComment: FC<ICommentProps> = (profile, publicationId: ICommentProps
 				alert('Something went wrong while creating CID')
 			} else {
 				let responseJSON = await response.json()
-				const pinataURI = responseJSON.uri
-				console.log('***Pinata URI', pinataURI)
+				pinataUri = responseJSON.uri
+				console.log('***Pinata URI', pinataUri)
 			}
 		} catch (err) {
 			console.log('Error while uploading to pinata', err)
 		}
 
-		return
-
 		// 3. Store Lens  metaData on IPFS and retrieve contentURI
+
 		console.log('Encrypted Comment local', encryptedComment)
-		const contentUri = await createCID(encryptedComment, encryptedComment, profile)
+		contentUri = await createCID(encryptedComment, encryptedComment, profile)
 		console.log('Create CID', contentUri)
 
-		// 4. Store
-		// 3. Create typedData with Lens API
+		// 4. Store relation ipfs x lens on Prisma
+
+		const prismaBody = {
+			id: contentUri,
+			uri: pinataUri,
+		}
+		try {
+			const response = await fetch('/api/store-prisma', {
+				method: 'POST',
+				headers: { 'Content-type': 'application/json' },
+				body: JSON.stringify(prismaBody),
+			})
+
+			if (response.status !== 200) {
+				alert('Something went wrong while pushing with prisma')
+			} else {
+				let responseJSON = await response.json()
+
+				console.log('PRSIMA RESPONSE', responseJSON)
+			}
+		} catch (err) {
+			console.log('Error while uploading to pinata', err)
+		}
+
+		// 5. Create typedData with Lens API
+
 		const createCommentRequest = {
 			profileId: profile,
 			publicationId: publicationId,
@@ -112,7 +140,9 @@ const PublishComment: FC<ICommentProps> = (profile, publicationId: ICommentProps
 		const typedData = result.data.createCommentTypedData.typedData
 		console.log('typedData', typedData)
 
-		// 4. Send Comment to Lens Contract
+		return
+
+		// 6. Send Comment to Lens Contract
 
 		const signature = await signer._signTypedData(
 			omitDeep(typedData.domain, '__typename'),

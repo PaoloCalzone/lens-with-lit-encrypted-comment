@@ -1,91 +1,32 @@
-import LitJsSdk from '@lit-protocol/sdk-browser'
+import { create } from 'ipfs-http-client'
 
-const client = new LitJsSdk.LitNodeClient()
-// For all EVM compatible chain
-const chain = 'mumbai'
-
-const accessControlConditions = [
-	{
-		// check if the author of the post is in possession
-		// of a specific wallet address
-		// https://developer.litprotocol.com/AccessControlConditions/EVM/basicExamples
-		contractAddress: '',
-		standardContractType: '',
-		chain,
-		method: '',
-		parameters: [':userAddress'],
-		returnValueTest: {
-			comparator: '=',
-			// post author address
-			value: process.env.NEXT_PUBLIC_ADDR_1,
-		},
-	},
-	{ operator: 'or' },
-	{
-		contractAddress: '',
-		standardContractType: '',
-		chain: 'mumbai',
-		method: '',
-		parameters: [':userAddress'],
-		returnValueTest: {
-			comparator: '=',
-			// comment author address
-			value: process.env.NEXT_PUBLIC_ADDR_2,
-		},
-	},
-]
-
-class Lit {
-	litNodeClient
-
-	async connect() {
-		try {
-			await client.connect()
-			this.litNodeClient = client
-		} catch (err) {
-			console.log('Error while connecting to Lit nodes', err)
-		}
-	}
-
-	async encryptString(text) {
-		if (!this.litNodeClient) {
-			await this.connect()
-		}
-		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
-		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString('BOBOBOBO')
-		console.log('CCCCCCCCCCCCCCCCCCCCencrypted string:', encryptedString)
-
-		const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-			accessControlConditions: accessControlConditions,
-			symmetricKey,
-			authSig,
-			chain,
-		})
-
-		return {
-			encryptedFile: encryptedString,
-			encryptedSymmetricKey: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, 'base16'),
-		}
-	}
-
-	async decryptString(encryptedStr, encryptedSymmetricKey) {
-		if (!this.litNodeClient) {
-			await this.connect()
-		}
-		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
-		const symmetricKey = await this.litNodeClient.getEncryptionKey({
-			accessControlConditions: accessControlConditions,
-			toDecrypt: encryptedSymmetricKey,
-			chain,
-			authSig,
-		})
-		const decryptedFile = await LitJsSdk.decryptString(encryptedStr, symmetricKey)
-		// eslint-disable-next-line no-console
-		console.log({
-			decryptedFile,
-		})
-		return { decryptedFile }
+export default async function handler(req, res) {
+	if (req.method === 'POST') {
+		console.log('REQUEST', req.body)
+		return uploadIpfs(req, res)
+	} else {
+		return res.status(405).json({ message: 'Method not allowed', success: false })
 	}
 }
+const projectId = process.env.INFURA_PROJECT_ID
+const secret = process.env.INFURA_SECRET
 
-export default new Lit()
+if (!projectId || !secret) {
+	throw new Error('Must define INFURA_PROJECT_ID and INFURA_SECRET in the .env to run this')
+}
+
+const client = create({
+	host: 'ipfs.infura.io',
+	port: 5001,
+	protocol: 'https',
+	headers: {
+		authorization: `Basic ${Buffer.from(`${projectId}:${secret}`, 'utf-8').toString('base64')}`,
+	},
+})
+
+const uploadIpfs = async (req, res) => {
+	const result = await client.add(JSON.stringify(req.body))
+
+	console.log('upload result ipfs', result.path)
+	return res.status(200).json({ success: true, cid: result.path })
+}
