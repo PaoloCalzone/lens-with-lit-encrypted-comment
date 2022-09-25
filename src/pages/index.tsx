@@ -8,7 +8,9 @@ import lit from '../lib/lit'
 import { apolloClient } from 'apollo-client'
 import { gql } from '@apollo/client'
 import { GET_PROFILES } from '../../api/get-profiles'
+import { GET_PUBLICATIONS } from '../../api/get-publications'
 import PublishComment from '../components/PublishComment'
+import Comments from '../components/Comments'
 
 const Home: FC = () => {
 	const [account, setAccount] = useState(null)
@@ -58,7 +60,8 @@ const Home: FC = () => {
 							</button>
 						</div>
 					</div>
-					{profile && <PublishComment profile={profile.id} publicationId={'2'} />}
+					{profile && <PublishComment profile={profile.id} publicationId="0x03" />}
+					<Comments />
 				</div>
 
 				<div className="flex justify-center mt-4 sm:items-center sm:justify-between">
