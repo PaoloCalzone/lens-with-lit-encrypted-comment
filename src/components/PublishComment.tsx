@@ -4,13 +4,12 @@ import { createCID } from 'utils/createCid'
 import { createCommentTypedData } from '../../api/create-comment-typed-data'
 import LENSHUB from '../../abi/lenshub.json'
 import { setLitEncryptedKey } from 'utils/state'
-import { KeyIcon } from '@heroicons/react/outline'
+import { KeyIcon } from '@heroicons/react'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import Spinner from './Spinner'
 import lit from '../lib/lit'
 import LitJsSdk from '@lit-protocol/sdk-browser'
 import prisma from '../lib/prisma'
-
 import omitDeep from 'omit-deep'
 import { isBooleanObject } from 'util/types'
 
@@ -192,6 +191,10 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 						onChange={e => setComment(e.target.value)}
 					/>
 					<div>
+						<label>
+							<input type="checkbox" checked={encryption} onChange={() => setEncryption(!encryption)} />
+							Send a private message
+						</label>
 						<button
 							type="submit"
 							className="flex   ml-3 w-40 py-2 px-8  border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -200,10 +203,6 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 							{submitting ? <Spinner /> : ''}
 							<span className="flex-1">Create</span>
 						</button>
-						<div onClick={() => setEncryption(true)}>
-							Click on the key if you want to encrypt your message
-							<KeyIcon />
-						</div>
 					</div>
 				</div>
 			</form>

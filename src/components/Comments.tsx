@@ -4,8 +4,6 @@ import { useQuery, gql } from '@apollo/client'
 
 const Comments: FC = () => {
 	const { data, loading, error } = useQuery(gql(GET_COMMENTS_OF), {
-		variables: { commentsOf: '0x3f7d-0x03', limit: 10 },
-
 		pollInterval: 500,
 	})
 	console.log('DATA', data)
@@ -22,7 +20,18 @@ const Comments: FC = () => {
 			</div>
 		)
 
-	return <div></div>
+	return (
+		<div>
+			<ul role="list" className="">
+				{data &&
+					data.publications.items.map(comment => (
+						<li key={comment.metadata.createdAt}>
+							<div className="my-4">{comment.metadata.content} </div>
+						</li>
+					))}
+			</ul>
+		</div>
+	)
 }
 
 export default Comments

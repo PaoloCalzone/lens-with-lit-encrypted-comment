@@ -11,6 +11,7 @@ import { GET_PROFILES } from '../../api/get-profiles'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
 import PublishComment from '../components/PublishComment'
 import Comments from '../components/Comments'
+import Post from '../components/Post'
 
 const Home: FC = () => {
 	const [account, setAccount] = useState(null)
@@ -61,6 +62,7 @@ const Home: FC = () => {
 						</div>
 					</div>
 					{profile && <PublishComment profile={profile.id} publicationId="0x03" />}
+					<Post />
 					<Comments />
 				</div>
 
