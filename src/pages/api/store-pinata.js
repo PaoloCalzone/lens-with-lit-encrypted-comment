@@ -38,5 +38,5 @@ const uploadPinata = async (req, res) => {
 	/* const result = await client.add(JSON.stringify(req.body))
 
 	console.log('upload result ipfs', result.path) */
-	return res.status(200).json({ success: true, cid: 'poinnnnn' })
+	return res.status(200).json({ success: true, uri: uri })
 }

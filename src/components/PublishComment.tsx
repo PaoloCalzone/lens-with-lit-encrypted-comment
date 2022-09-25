@@ -81,11 +81,11 @@ const PublishComment: FC<ICommentProps> = (profile, publicationId: ICommentProps
 				alert('Something went wrong while creating CID')
 			} else {
 				let responseJSON = await response.json()
-				const contentURI = `https://infura-ipfs.io/ipfs/${responseJSON.cid}`
-				return contentURI
+				const pinataURI = responseJSON.uri
+				console.log('***Pinata URI', pinataURI)
 			}
 		} catch (err) {
-			console.log('Error while uploading to ipfs', err)
+			console.log('Error while uploading to pinata', err)
 		}
 
 		return
