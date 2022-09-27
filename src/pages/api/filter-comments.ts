@@ -4,7 +4,7 @@ import prisma from '../../lib/prisma'
 // GET /api/filter-comments
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
 	const { commentProfileId, postProfileId } = req.query
-	const resultPosts = await prisma.post.findMany({
+	const resultPosts = await prisma.comment.findMany({
 		where: {
 			OR: [
 				{
