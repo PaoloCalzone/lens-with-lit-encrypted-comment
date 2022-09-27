@@ -15,6 +15,7 @@ import { isBooleanObject } from 'util/types'
 
 interface ICommentProps {
 	profile: string
+	postProfileId: string
 	publicationId: string
 }
 
@@ -28,6 +29,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 
 	const profile = props.profile
 	const publicationId = props.publicationId
+	const postProfileId = props.postProfileId
 
 	async function encryptComment(comment) {
 		if (encryption) {
@@ -104,6 +106,8 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 		if (encryption) {
 			const prismaBody = {
 				id: contentUri,
+				commentProfileId: profile,
+				postProfileId: postProfileId,
 				uri: pinataUri,
 			}
 			try {

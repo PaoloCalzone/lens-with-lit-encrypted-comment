@@ -10,7 +10,7 @@ export const createCID = async (description, content, name) => {
 		mainContentFocus: 'TEXT_ONLY',
 		external_url: null,
 		name: name,
-		attributes: [],
+		attributes: [{ displayType: 'string', traitType: 'Encrypted', value: 'https://somerandomIPFSURI' }],
 		image: null,
 		imageMimeType: null,
 		media: [

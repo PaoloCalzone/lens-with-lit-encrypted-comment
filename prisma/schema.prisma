@@ -12,5 +12,7 @@ datasource db {
 
 model Comment {
   id String @id
+  commentProfileId String
+  postProfileId String
   uri String
 }

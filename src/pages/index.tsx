@@ -61,7 +61,7 @@ const Home: FC = () => {
 							</button>
 						</div>
 					</div>
-					{profile && <PublishComment profile={profile.id} publicationId="0x03" />}
+					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
 					<Post />
 					<Comments />
 				</div>
