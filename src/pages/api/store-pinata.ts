@@ -1,7 +1,7 @@
-import { create } from 'ipfs-http-client'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import pinataSDK from '@pinata/sdk'
 
-export default async function handler(req, res) {
+export default async function handle(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === 'POST') {
 		console.log('REQUEST', req.body)
 		return uploadPinata(req, res)

@@ -1,6 +1,7 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { create } from 'ipfs-http-client'
 
-export default async function handler(req, res) {
+export default async function handle(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === 'POST') {
 		console.log('REQUEST', req.body)
 		return uploadIpfs(req, res)

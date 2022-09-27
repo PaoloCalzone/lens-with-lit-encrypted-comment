@@ -4,14 +4,10 @@ import { createCID } from 'utils/createCid'
 import { createCommentTypedData } from '../../api/create-comment-typed-data'
 import LENSHUB from '../../abi/lenshub.json'
 import { setLitEncryptedKey } from 'utils/state'
-import { KeyIcon } from '@heroicons/react'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
 import Spinner from './Spinner'
 import lit from '../lib/lit'
 import LitJsSdk from '@lit-protocol/sdk-browser'
-import prisma from '../lib/prisma'
 import omitDeep from 'omit-deep'
-import { isBooleanObject } from 'util/types'
 
 interface ICommentProps {
 	profile: string
@@ -70,7 +66,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 			encryptedComment = litResponse.encryptedComment
 			const encryptedKey = litResponse.encryptedSymmetricKey
 
-			// 2. Store encryptedFile and Key on Pinata and retrieve encryptionURI
+			// 2. Store encrypted File and encrypted Key on Pinata and retrieve encryptionURI
 
 			const body = {
 				litComment: encryptedComment,
@@ -88,7 +84,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 				} else {
 					let responseJSON = await response.json()
 					pinataUri = responseJSON.uri
-					console.log('***Pinata URI', pinataUri)
+					console.log('Pinata URI', pinataUri)
 				}
 			} catch (err) {
 				console.log('Error while uploading to pinata', err)
@@ -100,34 +96,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 		const postComment = encryption ? encryptedComment : comment
 		console.log('EncryptedComment', postComment)
 		contentUri = await createCID(postComment, postComment, profile)
-		console.log('Create CID', contentUri)
-
-		// 4. Store relation ipfs x lens on Prisma
-		if (encryption) {
-			const prismaBody = {
-				id: contentUri,
-				commentProfileId: profile,
-				postProfileId: postProfileId,
-				uri: pinataUri,
-			}
-			try {
-				const response = await fetch('/api/store-prisma', {
-					method: 'POST',
-					headers: { 'Content-type': 'application/json' },
-					body: JSON.stringify(prismaBody),
-				})
-
-				if (response.status !== 200) {
-					alert('Something went wrong while pushing with prisma')
-				} else {
-					let responseJSON = await response.json()
-
-					console.log('PRSIMA RESPONSE', responseJSON)
-				}
-			} catch (err) {
-				console.log('Error while uploading to pinata', err)
-			}
-		}
+		console.log('Create ipfs CID with lens metadata:', contentUri)
 
 		// 5. Create typedData with Lens API
 
@@ -175,6 +144,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 			},
 		})
 		console.log(tx.hash)
+		setSubmitting(false)
 	}
 
 	return (
