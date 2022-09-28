@@ -4,7 +4,7 @@ import { useQuery, gql } from '@apollo/client'
 
 const Comments: FC = () => {
 	const { data, loading, error } = useQuery(gql(GET_PUBLICATION), {})
-	console.log('DATA', data)
+	console.log('Post component data:', data)
 	if (loading)
 		return (
 			<div>

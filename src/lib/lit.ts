@@ -52,7 +52,7 @@ class Lit {
 			await this.connect()
 		}
 		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
-		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString('BOBOBOBO')
+		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(text)
 		console.log('encrypted string:', encryptedString)
 
 		const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({

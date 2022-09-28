@@ -1,36 +1,44 @@
 import { FC } from 'react'
 import { GET_COMMENTS_OF } from '../../api/get-comments-of'
 import { useQuery, gql } from '@apollo/client'
+import lit from '../lib/lit'
+import LitJsSdk from '@lit-protocol/sdk-browser'
 
 const Comments: FC = () => {
-	let comments
 	const { data, loading, error } = useQuery(gql(GET_COMMENTS_OF), {
 		pollInterval: 500,
 	})
+	async function decrypt() {
+		if (data) {
+			const comments = data.publications.items
 
-	async function sortEncryptedComments(comments) {
-		// for each comment, look up in db if it's encrypted
-		for (let i = 0; i < comments.length; i++) {
-			try {
-				const response = await fetch('/api/store-prisma', {
-					method: 'POST',
-					headers: { 'Content-type': 'application/json' },
-					body: JSON.stringify(prismaBody),
-				})
-
-				if (response.status !== 200) {
-					alert('Something went wrong while pushing with prisma')
+			const decryptedComments = await comments.map(async comment => {
+				const attributes = comment.metadata.attributes[0]
+				if (attributes && attributes.traitType === 'encrypted') {
+					try {
+						const ipfsUrl = comment.metadata.attributes[0].value
+						const response = await fetch(ipfsUrl)
+						const jsonLit = await response.json()
+						console.log('Fetched URL response is:', jsonLit)
+						console.log('KEY:', jsonLit.litKkey)
+						console.log('COMMENT', jsonLit.litComment)
+						const blob = LitJsSdk.base64StringToBlob(jsonLit.litComment)
+						const message = await lit.decryptString(blob, jsonLit.litKkey)
+						console.log('decrypted Message', message)
+						return message
+					} catch (err) {
+						console.log(err)
+					}
 				} else {
-					let responseJSON = await response.json()
-
-					console.log('PRSIMA RESPONSE', responseJSON)
+					return comment.metadata.content
 				}
-			} catch (err) {
-				console.log('Error while uploading to pinata', err)
-			}
+			})
+			console.log('@@@@@@@@@@@@@@@@@@@Array of all messages:', decryptedComments)
 		}
 	}
-	console.log('DATA', data)
+	decrypt()
+
+	console.log('Comments component data', data)
 	if (loading)
 		return (
 			<div>

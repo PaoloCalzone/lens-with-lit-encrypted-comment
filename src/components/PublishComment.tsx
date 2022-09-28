@@ -95,7 +95,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 
 		const postComment = encryption ? encryptedComment : comment
 		console.log('EncryptedComment', postComment)
-		contentUri = await createCID(postComment, postComment, profile)
+		contentUri = await createCID(postComment, postComment, profile, pinataUri)
 		console.log('Create ipfs CID with lens metadata:', contentUri)
 
 		// 5. Create typedData with Lens API
