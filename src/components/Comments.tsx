@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { GET_COMMENTS_OF } from '../../api/get-comments-of'
 import { useQuery, gql } from '@apollo/client'
 import lit from '../lib/lit'
@@ -8,35 +8,42 @@ const Comments: FC = () => {
 	const { data, loading, error } = useQuery(gql(GET_COMMENTS_OF), {
 		pollInterval: 500,
 	})
+	const [comments, setComments] = useState([])
+
+	useEffect(() => {
+		async function fetchComments() {
+			const fetchedComments = await decrypt()
+			setComments(fetchedComments)
+		}
+		fetchComments().catch(console.error)
+	}, [])
+
 	async function decrypt() {
 		if (data) {
 			const comments = data.publications.items
-
-			const decryptedComments = await comments.map(async comment => {
-				const attributes = comment.metadata.attributes[0]
-				if (attributes && attributes.traitType === 'encrypted') {
-					try {
-						const ipfsUrl = comment.metadata.attributes[0].value
-						const response = await fetch(ipfsUrl)
-						const jsonLit = await response.json()
-						console.log('Fetched URL response is:', jsonLit)
-						console.log('KEY:', jsonLit.litKkey)
-						console.log('COMMENT', jsonLit.litComment)
-						const blob = LitJsSdk.base64StringToBlob(jsonLit.litComment)
-						const message = await lit.decryptString(blob, jsonLit.litKkey)
-						console.log('decrypted Message', message)
-						return message
-					} catch (err) {
-						console.log(err)
+			let decryptedComments = await Promise.all(
+				comments.map(async comment => {
+					const attributes = comment.metadata.attributes[0]
+					if (attributes && attributes.traitType === 'encrypted') {
+						try {
+							const ipfsUrl = comment.metadata.attributes[0].value
+							const response = await fetch(ipfsUrl)
+							const jsonLit = await response.json()
+							const blob = LitJsSdk.base64StringToBlob(jsonLit.litComment)
+							const message = await lit.decryptString(blob, jsonLit.litKkey)
+							const decrypted = message.decryptedFile
+							return decrypted
+						} catch (err) {
+							console.log(err)
+						}
+					} else {
+						return comment.metadata.content
 					}
-				} else {
-					return comment.metadata.content
-				}
-			})
-			console.log('@@@@@@@@@@@@@@@@@@@Array of all messages:', decryptedComments)
+				})
+			)
+			return decryptedComments
 		}
 	}
-	decrypt()
 
 	console.log('Comments component data', data)
 	if (loading)
@@ -55,10 +62,10 @@ const Comments: FC = () => {
 	return (
 		<div>
 			<ul role="list" className="">
-				{data &&
-					data.publications.items.map(comment => (
-						<li key={comment.metadata.createdAt}>
-							<div className="my-4">{comment.metadata.content} </div>
+				{comments &&
+					comments.map(comment => (
+						<li key={comment}>
+							<div className="my-4">{comment} </div>
 						</li>
 					))}
 			</ul>

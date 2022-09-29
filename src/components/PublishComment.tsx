@@ -62,7 +62,7 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 		if (encryption) {
 			console.log('Encryption', encryption)
 			const litResponse = await encryptComment(comment)
-			console.log('LitResponse:', litResponse)
+			// console.log('LitResponse:', litResponse)
 			encryptedComment = litResponse.encryptedComment
 			const encryptedKey = litResponse.encryptedSymmetricKey
 
