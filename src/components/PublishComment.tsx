@@ -9,13 +9,13 @@ import lit from '../lib/lit'
 import LitJsSdk from '@lit-protocol/sdk-browser'
 import omitDeep from 'omit-deep'
 
-interface ICommentProps {
+interface Props {
 	profile: string
 	postProfileId: string
 	publicationId: string
 }
 
-const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
+const PublishComment: FC<Props> = ({ profile, postProfileId, publicationId }) => {
 	const [comment, setComment] = useState('')
 	//const [encryptedComment, setEncryptedComment] = useState('')
 	const [submitting, setSubmitting] = useState(false)
@@ -23,14 +23,14 @@ const PublishComment: FC<ICommentProps> = (props: ICommentProps) => {
 
 	const LENS_HUB_CONTRACT_ADDRESS = '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82'
 
-	const profile = props.profile
-	const publicationId = props.publicationId
-	const postProfileId = props.postProfileId
-
 	async function encryptComment(comment) {
 		if (encryption) {
 			try {
-				const { encryptedFile, encryptedSymmetricKey } = await lit.encryptString(comment)
+				const { encryptedFile, encryptedSymmetricKey } = await lit.encryptString(
+					comment,
+					'0x7e9DbDf5D10D64b597248E99194Ef715ACD88E52',
+					'0x41572A31bb185167dF5DdE27f7808483a5c9F085'
+				)
 				// Convert a Blob to a base64urlpad string. Note: This function returns a promise.
 				const encryptedComment = await LitJsSdk.blobToBase64String(encryptedFile)
 				return { encryptedComment, encryptedSymmetricKey }

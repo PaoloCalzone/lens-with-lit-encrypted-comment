@@ -4,6 +4,9 @@ const client = new LitJsSdk.LitNodeClient()
 // For all EVM compatible chain
 const chain = 'mumbai'
 
+const address1 = 'FirstAddress'
+const address2 = 'SecondAddress'
+
 const accessControlConditions = [
 	{
 		// check if the author of the post is in possession
@@ -17,7 +20,7 @@ const accessControlConditions = [
 		returnValueTest: {
 			comparator: '=',
 			// post author address
-			value: process.env.NEXT_PUBLIC_ADDR_1,
+			value: '0x1',
 		},
 	},
 	{ operator: 'or' },
@@ -30,10 +33,18 @@ const accessControlConditions = [
 		returnValueTest: {
 			comparator: '=',
 			// comment author address
-			value: process.env.NEXT_PUBLIC_ADDR_2,
+			value: '0x2',
 		},
 	},
 ]
+
+const setAccessControlConditions = (address_1, address_2) => {
+	console.log('EEEEEEEEEEEEEEEEEEEEE', address_1)
+	accessControlConditions[0].returnValueTest.value = address_1
+	accessControlConditions[2].returnValueTest.value = address_2
+	console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAA', accessControlConditions)
+	return accessControlConditions
+}
 
 class Lit {
 	litNodeClient
@@ -47,7 +58,8 @@ class Lit {
 		}
 	}
 
-	async encryptString(text) {
+	async encryptString(text, address1, address2) {
+		console.log('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNN', address1)
 		if (!this.litNodeClient) {
 			await this.connect()
 		}
@@ -55,12 +67,18 @@ class Lit {
 		const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(text)
 		console.log('encrypted string:', encryptedString)
 
+		const conditions = await setAccessControlConditions(address1, address2)
+
 		const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-			accessControlConditions: accessControlConditions,
+			accessControlConditions: conditions,
 			symmetricKey,
 			authSig,
 			chain,
 		})
+		console.log(
+			'§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§acees control conditinos',
+			setAccessControlConditions(address1, address2)
+		)
 
 		return {
 			encryptedFile: encryptedString,
@@ -68,13 +86,13 @@ class Lit {
 		}
 	}
 
-	async decryptString(encryptedStr, encryptedSymmetricKey) {
+	async decryptString(encryptedStr, encryptedSymmetricKey, address) {
 		if (!this.litNodeClient) {
 			await this.connect()
 		}
 		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
 		const symmetricKey = await this.litNodeClient.getEncryptionKey({
-			accessControlConditions: accessControlConditions,
+			accessControlConditions: setAccessControlConditions(address, ''),
 			toDecrypt: encryptedSymmetricKey,
 			chain,
 			authSig,

@@ -2,9 +2,7 @@ import { FC, useState } from 'react'
 import { APP_NAME } from '@/lib/consts'
 import ConnectWallet from '@/components/ConnectWallet'
 import { login } from '../../api/login'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { ShareIcon } from '@heroicons/react/outline'
-import lit from '../lib/lit'
 import { apolloClient } from 'apollo-client'
 import { gql } from '@apollo/client'
 import { GET_PROFILES } from '../../api/get-profiles'
@@ -28,6 +26,7 @@ const Home: FC = () => {
 			query: gql(GET_PROFILES),
 			variables: { request: { ownedBy: accounts[0] } },
 		})
+		console.log('Profile address', response.data.profiles.items[0].ownedBy)
 		setProfile({
 			id: response.data.profiles.items[0].id,
 			handle: response.data.profiles.items[0].handle,
@@ -63,7 +62,7 @@ const Home: FC = () => {
 					</div>
 					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
 					<Post />
-					<Comments />
+					{profile && <Comments profile={profile.id} />}
 				</div>
 
 				<div className="flex justify-center mt-4 sm:items-center sm:justify-between">
