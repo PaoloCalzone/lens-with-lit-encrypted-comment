@@ -11,12 +11,14 @@ const Comments: FC = () => {
 	const [comments, setComments] = useState([])
 
 	useEffect(() => {
-		async function fetchComments() {
-			const fetchedComments = await decrypt()
-			setComments(fetchedComments)
+		if (data) {
+			async function fetchComments() {
+				const fetchedComments = await decrypt()
+				setComments(fetchedComments)
+			}
+			fetchComments().catch(console.error)
 		}
-		fetchComments().catch(console.error)
-	}, [])
+	}, [data])
 
 	async function decrypt() {
 		if (data) {
@@ -62,12 +64,7 @@ const Comments: FC = () => {
 	return (
 		<div>
 			<ul role="list" className="">
-				{comments &&
-					comments.map(comment => (
-						<li key={comment}>
-							<div className="my-4">{comment} </div>
-						</li>
-					))}
+				{comments && comments.map((comment, index) => <li key={index}>{comment}</li>)}
 			</ul>
 		</div>
 	)
