@@ -26,10 +26,10 @@ const Home: FC = () => {
 			query: gql(GET_PROFILES),
 			variables: { request: { ownedBy: accounts[0] } },
 		})
-		console.log('Profile address', response.data.profiles.items[0].ownedBy)
 		setProfile({
 			id: response.data.profiles.items[0].id,
 			handle: response.data.profiles.items[0].handle,
+			address: response.data.profiles.items[0].ownedBy,
 		})
 		console.log('profile object', profile)
 	}
@@ -62,7 +62,7 @@ const Home: FC = () => {
 					</div>
 					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
 					<Post />
-					{profile && <Comments profile={profile.id} />}
+					{profile && <Comments profileAddress={profile.address} />}
 				</div>
 
 				<div className="flex justify-center mt-4 sm:items-center sm:justify-between">

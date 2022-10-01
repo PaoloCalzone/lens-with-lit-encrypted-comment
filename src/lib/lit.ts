@@ -1,6 +1,6 @@
 import LitJsSdk from '@lit-protocol/sdk-browser'
 
-const client = new LitJsSdk.LitNodeClient()
+const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: true })
 // For all EVM compatible chain
 const chain = 'mumbai'
 
@@ -92,7 +92,7 @@ class Lit {
 		}
 		const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain })
 		const symmetricKey = await this.litNodeClient.getEncryptionKey({
-			accessControlConditions: setAccessControlConditions(address, ''),
+			accessControlConditions: setAccessControlConditions(address, '0x60Ae865eevv725cd04353b5AAb364553f56ceF82'),
 			toDecrypt: encryptedSymmetricKey,
 			chain,
 			authSig,

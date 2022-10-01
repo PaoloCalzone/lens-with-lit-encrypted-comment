@@ -5,10 +5,10 @@ import lit from '../lib/lit'
 import LitJsSdk from '@lit-protocol/sdk-browser'
 
 interface Props {
-	profile: string
+	profileAddress: string
 }
 
-const Comments: FC<Props> = ({ profile }) => {
+const Comments: FC<Props> = ({ profileAddress }) => {
 	const { data, loading, error } = useQuery(gql(GET_COMMENTS_OF), {
 		pollInterval: 500,
 	})
@@ -36,11 +36,7 @@ const Comments: FC<Props> = ({ profile }) => {
 							const response = await fetch(ipfsUrl)
 							const jsonLit = await response.json()
 							const blob = LitJsSdk.base64StringToBlob(jsonLit.litComment)
-							const message = await lit.decryptString(
-								blob,
-								jsonLit.litKkey,
-								'0x7e9DbDf5D10D64b597248E99194Ef715ACD88E52'
-							)
+							const message = await lit.decryptString(blob, jsonLit.litKkey, profileAddress)
 							const decrypted = message.decryptedFile
 							return decrypted
 						} catch (err) {
