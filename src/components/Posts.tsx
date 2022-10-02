@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
 import { useQuery, gql } from '@apollo/client'
+import PostCard from '../components/PostCard'
 
 interface Props {
 	postProfileId: string
@@ -27,13 +28,19 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 
 	return (
 		<div>
-			{data && <h1 className="text-green-500">Posts from:{posts[0].profile.handle}</h1>}
-			{data &&
-				posts.map((post, index) => (
-					<div key={index}>
-						<div className="text-green-700">{post.metadata.content}</div>
-					</div>
-				))}
+			<ul role="list" className="flex flex-col gap-y-4">
+				{data &&
+					posts.map((post, index) => (
+						<PostCard
+							key={index}
+							id={post.id}
+							handle={post.profile.handle}
+							content={post.metadata.content}
+							postTimestamp={post.createdAt}
+							avatarURL={post.profile.picture.original.url}
+						/>
+					))}
+			</ul>
 		</div>
 	)
 }
