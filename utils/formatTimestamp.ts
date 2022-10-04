@@ -28,9 +28,9 @@ function age(timestamp) {
 	const minutes = 1000 * 60
 
 	if (Math.round(diff / days) > 1) return `${Math.round(diff / days)} days ago`
-	else if (Math.round(diff / hours) > 24 && Math.round(diff / hours) < 1)
-		return `${Math.round(diff / days)} hours ago`
-	else Math.round(diff / minutes) > 24 && Math.round(diff / minutes) < 1
+	else if (Math.round(diff / hours) < 24 && Math.round(diff / hours) > 1)
+		return `${Math.round(diff / hours)} hours ago`
+	else Math.round(diff / minutes) < 24 && Math.round(diff / minutes) > 1
 	return `${Math.round(diff / minutes)} minutes ago`
 }
 
