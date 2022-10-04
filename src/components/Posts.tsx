@@ -13,6 +13,10 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 	console.log('Post component data:', data)
 	const posts = data?.publications?.items || []
 	console.log('POSTS', posts)
+
+	function handleSubmit(e) {
+		e.preventDefault()
+	}
 	if (loading)
 		return (
 			<div>
@@ -31,14 +35,15 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 			<ul role="list" className="flex flex-col gap-y-4">
 				{data &&
 					posts.map((post, index) => (
-						<PostCard
-							key={index}
-							id={post.id}
-							handle={post.profile.handle}
-							content={post.metadata.content}
-							postTimestamp={post.createdAt}
-							avatarURL={post.profile.picture.original.url}
-						/>
+						<div key={index} onClick={handleSubmit}>
+							<PostCard
+								id={post.id}
+								handle={post.profile.handle}
+								content={post.metadata.content}
+								postTimestamp={post.createdAt}
+								avatarURL={post.profile.picture.original.url}
+							/>
+						</div>
 					))}
 			</ul>
 		</div>

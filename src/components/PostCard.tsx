@@ -1,6 +1,7 @@
 import { FC } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
-import { formatTimestamp, postAge } from '../../utils/formatTimestamp'
+import { age, formatTimestamp } from '../../utils/formatTimestamp'
 
 interface Props {
 	id: string
@@ -15,6 +16,9 @@ const PostCard: FC<Props> = ({ key, id, handle, content, postTimestamp, avatarUR
 	return (
 		<div className="group relative clickable-card rounded-lg border-2 border-slate-500 bg-white  focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500">
 			<article className="p-5">
+				<Link href={`/post/${id}`}>
+					<a className="clickable-card__link"></a>
+				</Link>
 				<div className="flex justify-between pb-4 space-x-1.5">
 					<div className="flex items-center space-x-3">
 						{avatarURL && (
@@ -37,9 +41,9 @@ const PostCard: FC<Props> = ({ key, id, handle, content, postTimestamp, avatarUR
 						<div className="whitespace-pre-wrap">
 							<span>{content}</span>
 						</div>
-						<div className="mt-2 block text-sm text-gray-500">{postAge(postTimestamp)}</div>
+						<div className="mt-2 block text-sm text-gray-500">{age(postTimestamp)}</div>
 					</div>
-					<p className="mt-2 block text-sm text-gray-500">{formatTimestamp(postTimestamp)}</p>
+					{/* <p className="mt-2 block text-sm text-gray-500">{formatTimestamp(postTimestamp)}</p> */}
 				</div>
 			</article>
 		</div>

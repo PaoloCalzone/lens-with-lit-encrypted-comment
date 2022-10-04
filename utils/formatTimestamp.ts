@@ -14,13 +14,24 @@ function formatTimestamp(timestamp: string) {
 	return postDateStr
 }
 
-function postAge(timestamp: string) {
+function difference(timestamp) {
 	const postDate: any = new Date(timestamp)
 	const now: any = new Date()
-	console.log('now', now)
 	const difference = now.getTime() - postDate.getTime()
-	const age = Math.round(difference / (1000 * 3600 * 24))
-	console.log('post age', age)
-	return age > 1 ? age : null
+	return difference
 }
-export { formatTimestamp, postAge }
+
+function age(timestamp) {
+	const diff = difference(timestamp)
+	const days = 1000 * 3600 * 24
+	const hours = 1000 * 3600
+	const minutes = 1000 * 60
+
+	if (Math.round(diff / days) > 1) return `${Math.round(diff / days)} days ago`
+	else if (Math.round(diff / hours) > 24 && Math.round(diff / hours) < 1)
+		return `${Math.round(diff / days)} hours ago`
+	else Math.round(diff / minutes) > 24 && Math.round(diff / minutes) < 1
+	return `${Math.round(diff / minutes)} minutes ago`
+}
+
+export { formatTimestamp, age }
