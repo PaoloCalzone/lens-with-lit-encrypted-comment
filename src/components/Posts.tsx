@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
 import { useQuery, gql } from '@apollo/client'
 import PostCard from '../components/PostCard'
@@ -10,12 +10,20 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 	const { data, loading, error } = useQuery(gql(GET_PUBLICATIONS), {
 		variables: { request: { profileId: postProfileId, publicationTypes: 'POST', limit: 5 } },
 	})
-	console.log('Post component data:', data)
+	const [isShown, setIsShown] = useState([])
 	const posts = data?.publications?.items || []
-	console.log('POSTS', posts)
 
-	function handleSubmit(e) {
-		e.preventDefault()
+	useEffect(() => {
+		if (data) {
+			const ids = []
+			data.publications?.items?.map(item => ids.push(item.id))
+			setIsShown(ids)
+		}
+	}, [data])
+
+	function handleSelect(id) {
+		const selectedPost = isShown.filter(postId => postId === id)
+		setIsShown(selectedPost)
 	}
 	if (loading)
 		return (
@@ -35,14 +43,16 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 			<ul role="list" className="flex flex-col gap-y-4">
 				{data &&
 					posts.map((post, index) => (
-						<div key={index} onClick={handleSubmit}>
-							<PostCard
-								id={post.id}
-								handle={post.profile.handle}
-								content={post.metadata.content}
-								postTimestamp={post.createdAt}
-								avatarURL={post.profile.picture.original.url}
-							/>
+						<div key={index} onClick={() => handleSelect(post.id)}>
+							{isShown.includes(post.id) && (
+								<PostCard
+									id={post.id}
+									handle={post.profile.handle}
+									content={post.metadata.content}
+									postTimestamp={post.createdAt}
+									avatarURL={post.profile.picture.original.url}
+								/>
+							)}
 						</div>
 					))}
 			</ul>

@@ -16,9 +16,6 @@ const PostCard: FC<Props> = ({ key, id, handle, content, postTimestamp, avatarUR
 	return (
 		<div className="group relative clickable-card rounded-lg border-2 border-slate-500 bg-white  focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500">
 			<article className="p-5">
-				<Link href={`/post/${id}`}>
-					<a className="clickable-card__link"></a>
-				</Link>
 				<div className="flex justify-between pb-4 space-x-1.5">
 					<div className="flex items-center space-x-3">
 						{avatarURL && (
