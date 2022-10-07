@@ -10,6 +10,7 @@ import { GET_PUBLICATIONS } from '../../api/get-publications'
 import PublishComment from '../components/PublishComment'
 import Comments from '../components/Comments'
 import Posts from '../components/Posts'
+import Search from '../components/Search'
 
 const Home: FC = () => {
 	const postProfileId = '0x3f7d'
@@ -61,6 +62,7 @@ const Home: FC = () => {
 							</button>
 						</div>
 					</div>
+					<Search />
 					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
 					<Posts postProfileId={postProfileId} />
 				</div>
