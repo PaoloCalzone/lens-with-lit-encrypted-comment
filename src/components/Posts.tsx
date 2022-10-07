@@ -51,6 +51,7 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 									content={post.metadata.content}
 									postTimestamp={post.createdAt}
 									avatarURL={post.profile.picture.original.url}
+									isShown={isShown}
 								/>
 							)}
 						</div>
