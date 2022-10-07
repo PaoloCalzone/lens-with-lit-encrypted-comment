@@ -7,10 +7,11 @@ const Search = () => {
 	const [active, setActive] = useState(false)
 	const [profile, setProfile] = useState([])
 	const [loadingState, setLoadingState] = useState('loading')
-	const [searchString, setSearchString] = useState('@paolocalzone')
+	const [searchString, setSearchString] = useState('')
 	const { loading, error, data } = useQuery(gql(SEARCH_PROFILES), {
 		variables: { query: searchString, type: 'PROFILE' },
 	})
+	console.log('DATA', data && data)
 
 	const onFocus = useCallback(() => {
 		setActive(true)
@@ -24,6 +25,12 @@ const Search = () => {
 		}
 	}, [])
 
+	const selectProfile = (id, handle) => {
+		console.log('Profile id is:', id)
+		setSearchString(handle)
+		// zustand to populate profile data
+	}
+	// TODO add button to on submit set profile in store
 	return (
 		<div className="" ref={searchRef}>
 			<input
@@ -36,10 +43,10 @@ const Search = () => {
 			/>
 			{active && data && data.search.items.length > 0 && (
 				<ul className="">
-					{data.search.items.map((item, id) => (
-						<li className="" key={id}>
+					{data.search.items.map((profile, id) => (
+						<li className="" key={id} onClick={() => selectProfile(profile.profileId, profile.handle)}>
 							<div>
-								<a>{item.handle}</a>
+								<a>{profile.handle}</a>
 							</div>
 						</li>
 					))}
