@@ -1,9 +1,5 @@
-export const GET_PUBLICATIONS = `query Publications {
-    publications(request: {
-      profileId: "0x01",
-      publicationTypes: [POST, COMMENT, MIRROR],
-      limit: 10
-    }) {
+export const GET_PUBLICATIONS = `query Publications($request: PublicationsQueryRequest!) {
+  publications(request: $request) {
       items {
         __typename 
         ... on Post {

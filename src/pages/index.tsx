@@ -9,9 +9,10 @@ import { GET_PROFILES } from '../../api/get-profiles'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
 import PublishComment from '../components/PublishComment'
 import Comments from '../components/Comments'
-import Post from '../components/Post'
+import Posts from '../components/Posts'
 
 const Home: FC = () => {
+	const postProfileId = '0x3f7d'
 	const [account, setAccount] = useState(null)
 	const [profile, setProfile] = useState(null)
 
@@ -61,8 +62,7 @@ const Home: FC = () => {
 						</div>
 					</div>
 					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
-					<Post />
-					{profile && <Comments profileAddress={profile.address} />}
+					<Posts postProfileId={postProfileId} />
 				</div>
 
 				<div className="flex justify-center mt-4 sm:items-center sm:justify-between">
