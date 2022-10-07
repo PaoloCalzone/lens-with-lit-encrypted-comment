@@ -1,6 +1,7 @@
 import { useCallback, useState, useRef } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { SEARCH_PROFILES } from '../../api/search-profiles'
+import Image from 'next/image'
 
 const Search = () => {
 	const searchRef = useRef(null)
@@ -32,9 +33,9 @@ const Search = () => {
 	}
 	// TODO add button to on submit set profile in store
 	return (
-		<div className="" ref={searchRef}>
+		<div className="relative" ref={searchRef}>
 			<input
-				className=""
+				className="box-border border-1 text-lg p-4 w-full "
 				onChange={e => setSearchString(e.target.value)}
 				onFocus={onFocus}
 				placeholder="Search posts"
@@ -42,11 +43,29 @@ const Search = () => {
 				value={searchString}
 			/>
 			{active && data && data.search.items.length > 0 && (
-				<ul className="">
+				<ul className=" list-none sm:rounded-xl border overflow-y-auto my-2 p-0 max-h-[50vh] max-w-md absolute top-full bg-white left-0 right-0 z-50">
 					{data.search.items.map((profile, id) => (
-						<li className="" key={id} onClick={() => selectProfile(profile.profileId, profile.handle)}>
-							<div>
-								<a>{profile.handle}</a>
+						<li
+							className="py-4  text-lg cursor-pointer hover:bg-slate-100"
+							key={id}
+							onClick={() => selectProfile(profile.profileId, profile.handle)}
+						>
+							<div className="flex center-items">
+								{profile.picture ? (
+									<picture>
+										<img
+											src={profile.picture.original.url}
+											alt="event image"
+											className=" bg-gray-200 rounded-full border  w-10 h-10"
+											loading="lazy"
+										/>
+									</picture>
+								) : null}
+
+								<div className="flex-col items-center  ml-6">
+									<div>{profile.name}</div>
+									<div className="text-base">@{profile.handle}</div>
+								</div>
 							</div>
 						</li>
 					))}
