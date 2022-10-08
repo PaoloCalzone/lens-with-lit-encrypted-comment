@@ -1,18 +1,19 @@
 import { useCallback, useState, useRef } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { SEARCH_PROFILES } from '../../api/search-profiles'
-import Image from 'next/image'
+import { useProfile } from '../store/profile'
 
 const Search = () => {
 	const searchRef = useRef(null)
 	const [active, setActive] = useState(false)
-	const [profile, setProfile] = useState([])
-	const [loadingState, setLoadingState] = useState('loading')
+	const [profile, setProfile] = useProfile(state => [state.profile, state.setProfile])
+
 	const [searchString, setSearchString] = useState('')
 	const { loading, error, data } = useQuery(gql(SEARCH_PROFILES), {
 		variables: { query: searchString, type: 'PROFILE' },
 	})
 	console.log('DATA', data && data)
+	console.log('PROFILE', profile)
 
 	const onFocus = useCallback(() => {
 		setActive(true)
@@ -26,11 +27,14 @@ const Search = () => {
 		}
 	}, [])
 
-	const selectProfile = (id, handle) => {
-		console.log('Profile id is:', id)
-		setSearchString(handle)
+	const selectProfile = profile => {
+		console.log('Selected Profile is:', profile)
+		setProfile(profile)
+		setSearchString('@' + profile.handle)
 		// zustand to populate profile data
 	}
+	console.log('Set Profile is', profile)
+
 	// TODO add button to on submit set profile in store
 	return (
 		<div className="relative" ref={searchRef}>
@@ -48,13 +52,13 @@ const Search = () => {
 						<li
 							className="py-4  text-lg cursor-pointer hover:bg-slate-100"
 							key={id}
-							onClick={() => selectProfile(profile.profileId, profile.handle)}
+							onClick={() => selectProfile(profile)}
 						>
 							<div className="flex center-items">
 								{profile.picture ? (
 									<picture>
 										<img
-											src={profile.picture.original.url}
+											src={profile.picture.original?.url || null}
 											alt="event image"
 											className=" bg-gray-200 rounded-full border  w-10 h-10"
 											loading="lazy"
