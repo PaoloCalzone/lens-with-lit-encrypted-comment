@@ -4,25 +4,21 @@ import { createCID } from 'utils/createCid'
 import { createCommentTypedData } from '../../api/create-comment-typed-data'
 import LENSHUB from '../../abi/lenshub.json'
 import { setLitEncryptedKey } from 'utils/state'
+import { useUserProfile } from '../store/userProfile'
 import Spinner from './Spinner'
 import lit from '../lib/lit'
 import LitJsSdk from '@lit-protocol/sdk-browser'
 import omitDeep from 'omit-deep'
 
-interface Props {
-	profile: string
-	postProfileId: string
-	publicationId: string
-}
-
-const PublishComment: FC<Props> = ({ profile, postProfileId, publicationId }) => {
+const PublishComment: FC = () => {
+	const userProfile = useUserProfile(state => state.userProfile)
 	const [comment, setComment] = useState('')
 	//const [encryptedComment, setEncryptedComment] = useState('')
 	const [submitting, setSubmitting] = useState(false)
 	const [encryption, setEncryption] = useState(false)
 
 	const LENS_HUB_CONTRACT_ADDRESS = '0x60Ae865ee4C725cd04353b5AAb364553f56ceF82'
-
+	console.log('User Profile from encrypted post', userProfile)
 	async function encryptComment(comment) {
 		if (encryption) {
 			try {
@@ -53,7 +49,7 @@ const PublishComment: FC<Props> = ({ profile, postProfileId, publicationId }) =>
 		const signer = provider.getSigner()
 		const contract = new ethers.Contract(LENS_HUB_CONTRACT_ADDRESS, LENSHUB, signer)
 
-		if (!profile) {
+		if (!userProfile.id) {
 			console.log('No profile detected...')
 			return
 		}
@@ -95,13 +91,13 @@ const PublishComment: FC<Props> = ({ profile, postProfileId, publicationId }) =>
 
 		const postComment = encryption ? encryptedComment : comment
 		console.log('EncryptedComment', postComment)
-		contentUri = await createCID(postComment, postComment, profile, pinataUri)
+		contentUri = await createCID(postComment, postComment, userProfile.id, pinataUri)
 		console.log('Create ipfs CID with lens metadata:', contentUri)
 
 		// 5. Create typedData with Lens API
 
 		const createCommentRequest = {
-			profileId: profile,
+			profileId: userProfile.id,
 			publicationId: '0x3f7d-0x03',
 			contentURI: contentUri,
 			collectModule: {

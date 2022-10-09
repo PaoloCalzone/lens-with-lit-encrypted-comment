@@ -8,6 +8,6 @@ type Action = {
 }
 
 export const usePostProfile = create<State & Action>(set => ({
-	postProfile: { profileId: '', handle: '', name: '', avatarUrl: '' },
+	postProfile: { profileId: null, handle: null, name: null, avatarUrl: null },
 	setPostProfile: postProfile => set(state => ({ postProfile })),
 }))

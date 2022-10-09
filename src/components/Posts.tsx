@@ -10,14 +10,15 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 	const { data, loading, error } = useQuery(gql(GET_PUBLICATIONS), {
 		variables: { request: { profileId: postProfileId, publicationTypes: 'POST', limit: 5 } },
 	})
+	// Array with first all posts from query, then only selected post by user
 	const [isShown, setIsShown] = useState([])
 	const posts = data?.publications?.items || []
 
 	useEffect(() => {
 		if (data) {
-			const ids = []
-			data.publications?.items?.map(item => ids.push(item.id))
-			setIsShown(ids)
+			const postsIds = []
+			data.publications?.items?.map(item => postsIds.push(item.id))
+			setIsShown(postsIds)
 		}
 	}, [data])
 

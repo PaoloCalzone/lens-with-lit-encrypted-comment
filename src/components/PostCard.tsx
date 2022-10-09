@@ -2,6 +2,7 @@ import { FC } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { age, formatTimestamp } from '../../utils/formatTimestamp'
+import PublishComment from '../components/PublishComment'
 
 interface Props {
 	id: string
@@ -16,7 +17,7 @@ const PostCard: FC<Props> = ({ key, id, handle, content, postTimestamp, avatarUR
 	console.log('Date', postTimestamp)
 	return (
 		<div>
-			<div className="group relative clickable-card rounded-lg border-2 border-slate-500 bg-white  focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500">
+			<div className="group relative mt-6 clickable-card rounded-lg border border-slate-200 bg-white  focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500">
 				<article className="p-5">
 					<div className="flex justify-between pb-4 space-x-1.5">
 						<div className="flex items-center space-x-3">
@@ -48,7 +49,7 @@ const PostCard: FC<Props> = ({ key, id, handle, content, postTimestamp, avatarUR
 					</div>
 				</article>
 			</div>
-			{isShown.length === 1 && <p>Comment</p>}
+			{isShown.length === 1 && <PublishComment />}
 		</div>
 	)
 }

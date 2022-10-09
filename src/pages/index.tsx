@@ -8,6 +8,7 @@ import { gql } from '@apollo/client'
 import { GET_PROFILES } from '../../api/get-profiles'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
 import { usePostProfile } from '../store/postProfile'
+import { useUserProfile } from '../store/userProfile'
 import PublishComment from '../components/PublishComment'
 import Comments from '../components/Comments'
 import Posts from '../components/Posts'
@@ -17,6 +18,7 @@ const Home: FC = () => {
 	//const postProfileId = '0x3f7d'
 	const [account, setAccount] = useState(null)
 	const [profile, setProfile] = useState(null)
+	const [userProfile, setUserProfile] = useUserProfile(state => [state.userProfile, state.setUserProfile])
 	const postProfile = usePostProfile(state => state.postProfile)
 
 	async function lensLogin() {
@@ -30,16 +32,12 @@ const Home: FC = () => {
 			query: gql(GET_PROFILES),
 			variables: { request: { ownedBy: accounts[0] } },
 		})
-		setProfile({
-			id: response.data.profiles.items[0].id,
-			handle: response.data.profiles.items[0].handle,
-			address: response.data.profiles.items[0].ownedBy,
-		})
-		console.log('profile object', postProfile)
+		setUserProfile(response.data.profiles.items[0])
 	}
 	async function handleSubmit(e) {
 		e.preventDefault()
 	}
+	console.log('USER PRofile object', userProfile)
 	console.log('post profile from index', postProfile)
 	return (
 		<div className="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
@@ -65,8 +63,7 @@ const Home: FC = () => {
 						</div>
 					</div>
 					<Search />
-					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
-					<Posts postProfileId={postProfile.profileId} />
+					{postProfile && <Posts postProfileId={postProfile.profileId} />}
 				</div>
 
 				<div className="flex justify-center mt-4 sm:items-center sm:justify-between">
