@@ -1,19 +1,19 @@
 import { useCallback, useState, useRef } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { SEARCH_PROFILES } from '../../api/search-profiles'
-import { useProfile } from '../store/profile'
+import { usePostProfile } from '../store/postProfile'
 
 const Search = () => {
 	const searchRef = useRef(null)
 	const [active, setActive] = useState(false)
-	const [profile, setProfile] = useProfile(state => [state.profile, state.setProfile])
+	const [postProfile, setPostProfile] = usePostProfile(state => [state.postProfile, state.setPostProfile])
 
 	const [searchString, setSearchString] = useState('')
 	const { loading, error, data } = useQuery(gql(SEARCH_PROFILES), {
 		variables: { query: searchString, type: 'PROFILE' },
 	})
 	console.log('DATA', data && data)
-	console.log('PROFILE', profile)
+	console.log('PROFILE', postProfile)
 
 	const onFocus = useCallback(() => {
 		setActive(true)
@@ -29,11 +29,11 @@ const Search = () => {
 
 	const selectProfile = profile => {
 		console.log('Selected Profile is:', profile)
-		setProfile(profile)
+		setPostProfile(profile)
 		setSearchString('@' + profile.handle)
 		// zustand to populate profile data
 	}
-	console.log('Set Profile is', profile)
+	console.log('Set Profile is', postProfile)
 
 	// TODO add button to on submit set profile in store
 	return (

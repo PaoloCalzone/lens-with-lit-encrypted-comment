@@ -7,15 +7,17 @@ import { apolloClient } from 'apollo-client'
 import { gql } from '@apollo/client'
 import { GET_PROFILES } from '../../api/get-profiles'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
+import { usePostProfile } from '../store/postProfile'
 import PublishComment from '../components/PublishComment'
 import Comments from '../components/Comments'
 import Posts from '../components/Posts'
 import Search from '../components/Search'
 
 const Home: FC = () => {
-	const postProfileId = '0x3f7d'
+	//const postProfileId = '0x3f7d'
 	const [account, setAccount] = useState(null)
 	const [profile, setProfile] = useState(null)
+	const postProfile = usePostProfile(state => state.postProfile)
 
 	async function lensLogin() {
 		const accounts = await window.ethereum.request({
@@ -33,12 +35,12 @@ const Home: FC = () => {
 			handle: response.data.profiles.items[0].handle,
 			address: response.data.profiles.items[0].ownedBy,
 		})
-		console.log('profile object', profile)
+		console.log('profile object', postProfile)
 	}
 	async function handleSubmit(e) {
 		e.preventDefault()
 	}
-
+	console.log('post profile from index', postProfile)
 	return (
 		<div className="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
 			<div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
@@ -64,7 +66,7 @@ const Home: FC = () => {
 					</div>
 					<Search />
 					{profile && <PublishComment profile={profile.id} publicationId="0x03" postProfileId="0x3f7d" />}
-					<Posts postProfileId={postProfileId} />
+					<Posts postProfileId={postProfile.profileId} />
 				</div>
 
 				<div className="flex justify-center mt-4 sm:items-center sm:justify-between">
