@@ -1,11 +1,10 @@
 import { useTheme } from 'next-themes'
-import { APP_NAME } from '@/lib/consts'
 import { createClient, WagmiConfig } from 'wagmi'
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 
 const client = createClient(
 	getDefaultClient({
-		appName: APP_NAME,
+		appName: 'Lens Private Comment',
 		autoConnect: true,
 		infuraId: process.env.NEXT_PUBLIC_INFURA_ID,
 	})

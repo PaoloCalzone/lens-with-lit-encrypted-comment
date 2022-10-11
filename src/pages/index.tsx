@@ -1,5 +1,4 @@
 import { FC, useState } from 'react'
-import { APP_NAME } from '@/lib/consts'
 import ConnectWallet from '@/components/ConnectWallet'
 import { login } from '../../api/login'
 import { ShareIcon } from '@heroicons/react/outline'
@@ -43,15 +42,10 @@ const Home: FC = () => {
 		<div className="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
 			<div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
 				<div className="flex justify-center pt-8 sm:justify-start sm:pt-0">
-					<h1 className="text-6xl font-bold dark:text-white">{APP_NAME}</h1>
+					<h1 className="text-6xl font-bold dark:text-white">LENS PRIVATE COMMENT</h1>
 				</div>
 				<div className="">
 					<div>
-						<h1 className="text-lg my-8">
-							<span className="text-2xl">1.</span> Connect your wallet, select{' '}
-							<strong>Polygon Mumbai</strong> network and <strong>sign</strong> the transaction to be
-							logged in.
-						</h1>
 						<div className="flex justify-end">
 							<button
 								className="bg-emerald-600 w-40 py-2 px-4 text-center border border-gray-300 rounded-full shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
