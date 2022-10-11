@@ -1,16 +1,18 @@
 import { FC, useState, useEffect } from 'react'
 import { GET_PUBLICATIONS } from '../../api/get-publications'
 import { useQuery, gql } from '@apollo/client'
+import { usePublication } from '../store/publication'
 import PostCard from '../components/PostCard'
 
 interface Props {
-	postProfileId: string
+	userProfileId: string
 }
-const Posts: FC<Props> = ({ postProfileId }) => {
+const Posts: FC<Props> = ({ userProfileId }) => {
 	const { data, loading, error } = useQuery(gql(GET_PUBLICATIONS), {
-		variables: { request: { profileId: postProfileId, publicationTypes: 'POST', limit: 5 } },
+		variables: { request: { profileId: userProfileId, publicationTypes: 'POST', limit: 5 } },
 	})
-	// Array with first all posts from query, then only selected post by user
+	const [publication, setPublication] = usePublication(state => [state.publication, state.setPublication])
+	// Array with first all posts from query, then only the selected post by user
 	const [isShown, setIsShown] = useState([])
 	const posts = data?.publications?.items || []
 
@@ -23,8 +25,9 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 	}, [data])
 
 	function handleSelect(id) {
-		const selectedPost = isShown.filter(postId => postId === id)
-		setIsShown(selectedPost)
+		const selectedPostId = isShown.filter(postId => postId === id)
+		setPublication(posts.filter(post => post.id === selectedPostId[0]))
+		setIsShown(selectedPostId)
 	}
 	if (loading)
 		return (
@@ -51,7 +54,7 @@ const Posts: FC<Props> = ({ postProfileId }) => {
 									handle={post.profile.handle}
 									content={post.metadata.content}
 									postTimestamp={post.createdAt}
-									avatarURL={post.profile.picture.original.url}
+									avatarURL={post.profile?.picture?.original?.url}
 									isShown={isShown}
 								/>
 							)}
