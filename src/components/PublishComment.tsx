@@ -92,7 +92,7 @@ const PublishComment: FC = () => {
 
 		const postComment = encryption ? encryptedComment : comment
 		console.log('EncryptedComment', postComment)
-		const commentWithLink = `${postComment} This comment was encrypted. You can decrypt it here:`
+		const commentWithLink = `${postComment} This comment was encrypted. You can decrypt it here: https://some-url.xyz`
 		console.log('Comment with Link', commentWithLink)
 		contentUri = await createCID(commentWithLink, commentWithLink, userProfile.id, pinataUri)
 		console.log('Create ipfs CID with lens metadata:', contentUri)
