@@ -46,7 +46,6 @@ const Home: FC = () => {
 					<h1 className="text-6xl font-bold dark:text-white">{APP_NAME}</h1>
 				</div>
 				<div className="">
-					{/**THE REACT COMPONENT */}
 					<div>
 						<h1 className="text-lg my-8">
 							<span className="text-2xl">1.</span> Connect your wallet, select{' '}
