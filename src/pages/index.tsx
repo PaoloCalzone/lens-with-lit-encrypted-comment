@@ -39,22 +39,19 @@ const Home: FC = () => {
 	console.log('USER PRofile object', userProfile)
 	console.log('post profile from index', publication)
 	return (
-		<div className="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
+		<div className="relative flex flex-col items-top  min-h-screen bg-gray-100 dark:bg-gray-900  py-4 sm:pt-0">
+			<div className="flex justify-around items-center m-4">
+				<div>LOGO</div>
+				<button
+					className="bg-emerald-600 w-40 py-2 px-4 text-center border border-gray-300 rounded-full shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
+					onClick={() => lensLogin()}
+				>
+					Login
+				</button>
+			</div>
+
 			<div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
-				<div className="flex justify-center pt-8 sm:justify-start sm:pt-0">
-					<h1 className="text-6xl font-bold dark:text-white">LENS PRIVATE COMMENT</h1>
-				</div>
-				<div className="">
-					<div>
-						<div className="flex justify-end">
-							<button
-								className="bg-emerald-600 w-40 py-2 px-4 text-center border border-gray-300 rounded-full shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
-								onClick={() => lensLogin()}
-							>
-								Login
-							</button>
-						</div>
-					</div>
+				<div className=" flex-col sm:w-[600px] mt-24 sm:pt-0">
 					<Search />
 					{userProfile && <Posts userProfileId={searchProfile.profileId} />}
 				</div>
@@ -64,7 +61,7 @@ const Home: FC = () => {
 						<div className="flex items-center">
 							<ShareIcon className="-mt-px w-5 h-5 text-gray-400" />
 
-							<a href="https://twitter.com/m1guelpf" className="ml-1 underline">
+							<a href="https://twitter.com/paolocalz" className="ml-1 underline">
 								Share
 							</a>
 						</div>
